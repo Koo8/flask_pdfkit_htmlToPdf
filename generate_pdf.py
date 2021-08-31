@@ -39,6 +39,8 @@ def index():
     # IMPORTANT: instead of return a render_template, return a response, with a clarified header of 'Content-Type'
     response = make_response(pdf_content)
     response.headers['Content-Type'] = 'application/pdf'
+     # if want to save the pdf result, use attachment, otherwise no need to have this line
+    response.headers['Content-Disposition']= 'attachment; filename=output.pdf'
     return response
 
 if __name__ == "__main__":
