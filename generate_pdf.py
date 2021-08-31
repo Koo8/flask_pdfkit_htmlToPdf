@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template, make_response
 import pdfkit as pdf
 
 
@@ -15,7 +15,9 @@ import pdfkit as pdf
     """
 
 app = Flask(__name__)
-
+"""
+   TO CONFIG THE PATH of WKHTMLTOPDF
+"""
 path_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
 config = pdf.configuration(wkhtmltopdf=path_wkhtmltopdf)
 
@@ -27,8 +29,17 @@ config = pdf.configuration(wkhtmltopdf=path_wkhtmltopdf)
 @app.route("/")
 def index():
     # result = pdf.from_url("https://pypi.org/project/pdfkit/", "out.pdf", configuration=config)
-    result = pdf.from_file('myhtmlfile.html', 'out.pdf',configuration=config)
-    return result
+
+    # Method ONE, turn the template into a string using render_template()
+    # rendered = render_template('myhtmlfile.html')
+    # pdf_content = pdf.from_string(rendered, False,configuration=config)
+
+    # METHOD TWO: use html file directly
+    pdf_content = pdf.from_file('templates/myhtmlfile.html', False, configuration=config)
+    # IMPORTANT: instead of return a render_template, return a response, with a clarified header of 'Content-Type'
+    response = make_response(pdf_content)
+    response.headers['Content-Type'] = 'application/pdf'
+    return response
 
 if __name__ == "__main__":
     app.run(debug=True)
